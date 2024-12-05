@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Red Button Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    #score {
+      font-size: 64px;
+      font-weight: bold;
+      position: absolute;
+      top: 20px;
+    }
+    #red-button {
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="score">0</div>
+  <button id="red-button"></button>
+
+  <script>
+    // Load saved score
+    let playerScore = parseInt(localStorage.getItem('playerScore'), 10) || 0;
+
+    // Display the saved score
+    document.getElementById('score').textContent = playerScore;
+
+    // Handle button click
+    document.getElementById('red-button').addEventListener('click', () => {
+      playerScore++;
+      localStorage.setItem('playerScore', playerScore);
+      document.getElementById('score').textContent = playerScore;
+    });
+  </script>
+</body>
+</html>

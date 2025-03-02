@@ -3,51 +3,411 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Red Button Game</title>
+  <title>Typing Game</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
-      background-color: #f4f4f4;
+      text-align: center;
+      flex-direction: column;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
-    #score {
-      font-size: 64px;
+
+    .light-theme {
+      background-color: #f7f9fc;
+      color: #333;
+    }
+
+    .noir-theme {
+      background-color: #2c2c2c;
+      color: #e0e0e0;
+    }
+
+    #game-container {
+      width: 60%;
+      max-width: 800px;
+      padding: 40px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+    }
+
+    .light-theme #game-container {
+      background-color: #ffffff;
+    }
+
+    .noir-theme #game-container {
+      background-color: #3c3c3c;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #2d3e50;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .light-theme h1 {
+      color: #2d3e50;
+    }
+
+    .noir-theme h1 {
+      color: #e0e0e0;
+    }
+
+    #score-board {
+      display: flex;
+      justify-content: space-between;
+      font-size: 22px;
+      margin-bottom: 30px;
+    }
+
+    #score, #highscore {
       font-weight: bold;
+    }
+
+    .light-theme #score-board {
+      color: #3b4b63;
+    }
+
+    .noir-theme #score-board {
+      color: #e0e0e0;
+    }
+
+    #word-container {
+      margin-bottom: 20px;
+    }
+
+    #current-word {
+      font-size: 40px;
+      color: #4e8ce2;
+      font-weight: 600;
+      letter-spacing: 3px;
+    }
+
+    .light-theme #current-word {
+      color: #4e8ce2;
+    }
+
+    .noir-theme #current-word {
+      color: #ffcc00;
+    }
+
+    #input-field {
+      font-size: 24px;
+      padding: 12px;
+      width: 80%;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      margin-top: 20px;
+      outline: none;
+    }
+
+    .light-theme #input-field {
+      border-color: #ddd;
+    }
+
+    .noir-theme #input-field {
+      border-color: #666;
+    }
+
+    #input-field:focus {
+      border-color: #4e8ce2;
+    }
+
+    #timer {
+      font-size: 40px;
+      margin-top: 30px;
+      color: #ff5c8d;
+    }
+
+    .light-theme #timer {
+      color: #ff5c8d;
+    }
+
+    .noir-theme #timer {
+      color: #ff9900;
+    }
+
+    #game-over {
+      color: #ff5c8d;
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    #controls {
+      margin-top: 30px;
+    }
+
+    #controls button {
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+    }
+
+    #start-btn {
+      background-color: #4e8ce2;
+      color: white;
+    }
+
+    #pause-btn {
+      background-color: #ffbb33;
+      color: white;
+    }
+
+    #end-btn {
+      background-color: #ff5c8d;
+      color: white;
+    }
+
+    #restart-btn {
+      background-color: #28a745;
+      color: white;
+      display: none;
+    }
+
+    #controls button:hover {
+      background-color: #333;
+    }
+
+    #controls button:disabled {
+      background-color: #f0f0f0;
+      color: #ccc;
+      cursor: not-allowed;
+    }
+
+    #theme-switcher {
       position: absolute;
       top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
     }
-    #red-button {
-      width: 200px;
-      height: 200px;
-      background-color: red;
-      border: none;
-      border-radius: 50%;
+
+    #theme-switcher label {
+      font-size: 18px;
+      margin-right: 10px;
+      color: #333;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
       cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      border-radius: 50%;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+    }
+
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
     }
   </style>
 </head>
-<body>
-  <div id="score">0</div>
-  <button id="red-button"></button>
+<body class="light-theme">
+  <div id="game-container">
+    <h1>Typing Game</h1>
+    <div id="score-board">
+      <div id="score">Score: 0</div>
+      <div id="highscore">Highscore: 0</div>
+    </div>
+    <div id="timer">60</div>
+    <div id="word-container">
+      <span id="current-word"></span>
+    </div>
+    <input type="text" id="input-field" placeholder="Start typing..." autofocus disabled>
+    <div id="game-over" style="display: none;">Game Over!</div>
+    <div id="controls">
+      <button id="start-btn">Start</button>
+      <button id="pause-btn" style="display:none;">Pause</button>
+      <button id="resume-btn" style="display:none;">Resume</button>
+      <button id="end-btn" style="display:none;">End</button>
+      <button id="restart-btn" style="display:none;">Restart</button>
+    </div>
+    <div id="theme-switcher">
+      <label for="theme-toggle">Noir Theme</label>
+      <label class="switch">
+        <input type="checkbox" id="theme-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
 
   <script>
-    // Load saved score
-    let playerScore = parseInt(localStorage.getItem('playerScore'), 10) || 0;
+    const words = [
+      "z"
+    ];
 
-    // Display the saved score
-    document.getElementById('score').textContent = playerScore;
+    // Shuffle the words array
+    function shuffleWords(words) {
+      for (let i = words.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [words[i], words[j]] = [words[j], words[i]];
+      }
+    }
 
-    // Handle button click
-    document.getElementById('red-button').addEventListener('click', () => {
-      playerScore++;
-      localStorage.setItem('playerScore', playerScore);
-      document.getElementById('score').textContent = playerScore;
+    let currentWordIndex = 0;
+    let score = 0;
+    let highscore = localStorage.getItem('highscore') || 0;
+    let remainingTime = 60;
+    let isGameRunning = false;
+    let isGamePaused = false;
+    let timerInterval;
+
+    const currentWordElement = document.getElementById('current-word');
+    const inputField = document.getElementById('input-field');
+    const scoreElement = document.getElementById('score');
+    const timerElement = document.getElementById('timer');
+    const gameOverElement = document.getElementById('game-over');
+    const startBtn = document.getElementById('start-btn');
+    const pauseBtn = document.getElementById('pause-btn');
+    const resumeBtn = document.getElementById('resume-btn');
+    const endBtn = document.getElementById('end-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const themeToggle = document.getElementById('theme-toggle');
+
+    document.getElementById('highscore').innerText = `Highscore: ${highscore}`;
+
+    function startGame() {
+      shuffleWords(words); // Shuffle words at the start of the game
+      isGameRunning = true;
+      score = 0;
+      remainingTime = 60;
+      gameOverElement.style.display = 'none';
+      inputField.disabled = false;
+      inputField.focus();
+      scoreElement.innerText = `Score: ${score}`;
+      timerElement.innerText = remainingTime;
+      currentWordElement.innerText = words[currentWordIndex];
+      startBtn.style.display = 'none';
+      pauseBtn.style.display = 'inline-block';
+      endBtn.style.display = 'inline-block';
+      restartBtn.style.display = 'none';
+
+      timerInterval = setInterval(() => {
+        if (remainingTime > 0 && !isGamePaused) {
+          remainingTime--;
+          timerElement.innerText = remainingTime;
+        } else if (remainingTime === 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function pauseGame() {
+      isGamePaused = true;
+      pauseBtn.style.display = 'none';
+      resumeBtn.style.display = 'inline-block';
+    }
+
+    function resumeGame() {
+      isGamePaused = false;
+      pauseBtn.style.display = 'inline-block';
+      resumeBtn.style.display = 'none';
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      isGameRunning = false;
+      inputField.disabled = true;
+      gameOverElement.style.display = 'block';
+      restartBtn.style.display = 'inline-block';
+      highscore = Math.max(score, highscore);
+      localStorage.setItem('highscore', highscore);
+      document.getElementById('highscore').innerText = `Highscore: ${highscore}`;
+    }
+
+    function restartGame() {
+      currentWordIndex = 0;
+      score = 0;
+      scoreElement.innerText = `Score: ${score}`;
+      timerElement.innerText = 60;
+      gameOverElement.style.display = 'none';
+      restartBtn.style.display = 'none';
+      startBtn.style.display = 'inline-block';
+    }
+
+    function checkInput() {
+      if (inputField.value === currentWordElement.innerText) {
+        score++;
+        scoreElement.innerText = `Score: ${score}`;
+        inputField.value = '';
+        currentWordIndex++;
+        if (currentWordIndex < words.length) {
+          currentWordElement.innerText = words[currentWordIndex];
+        }
+      }
+    }
+
+    inputField.addEventListener('input', checkInput);
+
+    startBtn.addEventListener('click', startGame);
+    pauseBtn.addEventListener('click', pauseGame);
+    resumeBtn.addEventListener('click', resumeGame);
+    endBtn.addEventListener('click', endGame);
+    restartBtn.addEventListener('click', restartGame);
+
+    themeToggle.addEventListener('change', function() {
+      if (themeToggle.checked) {
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('noir-theme');
+        localStorage.setItem('theme', 'noir-theme');
+      } else {
+        document.body.classList.remove('noir-theme');
+        document.body.classList.add('light-theme');
+        localStorage.setItem('theme', 'light-theme');
+      }
     });
   </script>
 </body>
 </html>
+
+

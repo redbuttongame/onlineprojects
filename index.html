@@ -409,16 +409,16 @@
     }
 
     function checkInput() {
-      if (inputField.value === currentWordElement.innerText) {
-        score++;
-        scoreElement.innerText = `Score: ${score}`;
-        inputField.value = '';
-        currentWordIndex++;
-        if (currentWordIndex < words.length) {
-          currentWordElement.innerText = words[currentWordIndex];
-        }
-      }
+  if (inputField.value.replace(/\s+/g, '').toLowerCase() === currentWordElement.innerText.toLowerCase()) {
+    score++;
+    scoreElement.innerText = `Score: ${score}`;
+    inputField.value = '';
+    currentWordIndex++;
+    if (currentWordIndex < words.length) {
+      currentWordElement.innerText = words[currentWordIndex];
     }
+  }
+}
 
     inputField.addEventListener('input', checkInput);
 
